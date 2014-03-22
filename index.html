@@ -4,9 +4,9 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Scooletz presents Protoz!</title>
-		<meta name="description" content="Szymon Kulec presentation about Google Protocol Buffers">
-		<meta name="author" content="WG.NET">
+		<title>Scooletz presents Google protocol buffers</title>
+		<meta name="description" content="Scooletz presents Google protocol buffers">
+		<meta name="author" content="Szymon Kulec">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -56,25 +56,225 @@
 					</ul>
 				</section>
 				<section id="history">
-					<h2>a bit of history</h2>
+					<section>
+						<h2>a bit of history</h2>
+					</section>
+					<section>
+						<h2>before protocol buffers</h2>
+						<ul>
+							<li>sad Google developers :(</li>
+							<li>explicitly formatted protocols</li>
+							<li>versioning handled with if-ology</li>
+						</ul>
+					</section>
+					<section>
+						<h2>and then came proto...</h2>
+						<ul>
+							<li>created for index server req-res</li>
+							<li>easy introducing new fields</li>
+							<li>passing unknown fields further</li>
+							<li>semi self-describing format</li>
+							<li>automatic generation of (de-)serialization code</li>
+							<li>services descibed as proto</li>
+						</ul>
+					</section>
 				</section>
 				<section id="syntax">
-					<h2>syntax & semantics</h2>
+					<section><h2>syntax & semantics</h2></section>
+					<section>
+						<h2>example message</h2>
+						<pre><code data-trim>
+message Presentation {
+  required string author = 1;
+  required string topic = 2;
+  optional int32 attendees_count = 3 [default = 1]; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tag = 5;
+}
+						</code></pre>
+						<ul>
+							<li class="fragment">message has a <strong>name</strong></li>
+							<li class="fragment">each field has a <strong>tag</strong> assigned</li>
+							<li class="fragment">
+								each field is defined as <strong>required</strong>, <strong>optional</strong> or <strong>repeated</strong>
+							</li>
+							<li class="fragment">
+								each field has its <strong>type</strong> defined</strong>
+							</li>
+							<li class="fragment">
+								a field can have a <strong>default value</strong> declared</strong>. Be aware that it depends on the compiled .proto and is not stored with message!
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h2>tags</h2>
+						<pre><code data-trim>
+message Presentation {
+  required string author = 1;
+  required string topic = 2;
+  optional int32 attendees_count = 3 [default = 1]; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tags = 5;
+}
+						</code></pre>
+						<ul>
+							<li>field id</li>
+							<li>unique per message</li>
+							<li>smaller tag - smaller field overhead (choose smallest)</li>
+						</ul>
+					</section>
+					<section>
+						<h2>quantity</h2>
+						<pre><code data-trim>
+message Presentation {
+  required string author = 1;
+  required string topic = 2;
+  optional int32 attendees_count = 3; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tags = 5;
+}
+						</code></pre>
+						<ul>
+							<li><em>optional</em> - zero or one field per message</li>
+							<li><em>required</em> - one field per message (beware!)</li>
+							<li><em>repeated</em> - zero to infinity field values per message (can be replaced with optional)</li>
+						</ul>
+					</section>
+					<section>
+						<h2>multiple messages</h2>
+						<p> .proto file can contain more than one message type</p>
+						<pre><code data-trim>
+message Presentation {
+  required string author = 1;
+  required string topic = 2;
+  optional int32 attendees_count = 3; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tags = 5;
+}
+
+message Author {
+  required string name = 1;
+  repeated string tags = 2;
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>using your own types</h2>
+						<p> a type declared can be used later</p>
+						<pre><code data-trim>
+message Presentation {
+  required Author author = 1; // this isn't compatible with earlier version!
+  required string topic = 2;
+  optional int32 attendees_count = 3; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tags = 5;
+}
+
+message Author {
+  required string name = 1;
+  repeated string tags = 2;
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>nested types</h2>
+						<p> one can nest types to provide a scope/namespaces of messages</p>
+						<pre><code data-trim>
+message Presentation {
+  message Author {
+    required string name = 1;
+    repeated string tags = 2;
+  }
+
+  required Author author = 1; // this isn't compatible with earlier version!
+  required string topic = 2;
+  optional int32 attendees_count = 3; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tags = 5;
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>enumerations</h2>
+						<pre><code data-trim>
+enum PresentationLevel {
+  option allow_alias = true;
+  
+  EASY = 100;
+  MEDIUM = 200;
+  EXPERT = 300;
+  HARDCORE = 300; // alias, allowed by option above
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>extensions</h2>
+						<p> some tools doesn't require to define extensions, but the standard does</p>
+						<pre><code data-trim>
+message Presentation {
+  // ...
+  extensions 50 to 100;
+}
+
+extend Presentation {
+  optional string address = 51;
+}
+
+						</code></pre>
+					</section>
+					<section>
+						<h2>extensions - convention</h2>
+						<p> it's quite common to define a bag for your fields, to simplify future version changes</p>
+						<pre><code data-trim>
+message Presentation {
+  // ...
+  extensions 50 to 100;
+}
+
+message Address {
+  extend Presentation {
+    optional Address address = 51;
+  }
+  
+  optional string street = 1;
+  optional string city = 2;
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>packages</h2>
+						<pre><code data-trim>
+package WGNET;
+message Presentation {
+  // ...
+  extensions 50 to 100;
+}
+
+message Address {
+  extend Presentation {
+    optional Address address = 51;
+  }
+  
+  optional string street = 1;
+  optional string city = 2;
+}
+						</code></pre>
+					</section>
 				</section>
 				<section id="bytes">
-					<h2>bytes structure & layout</h2>
+					<section><h2>bytes structure & layout</h2></section>
 				</section>
 				<section id="performance">
-					<h2>performance</h2>
+					<section><h2>performance</h2></section>
 				</section>
 				<section id="tooling">
-					<h2>tooling</h2>
+					<section><h2>tooling</h2></section>
 				</section>
 				<section id="netLibs">
-					<h2>libraries for .NET</h2>
+					<section><h2>libraries for .NET</h2></section>
 				</section>
 				<section id="protobuf_linq">
-					<h2>protobuf-linq</h2>
+					<section><h2>protobuf-linq</h2></section>
 				</section>
 				<section id="credits">
 					<h2>Thank you!</h2>
