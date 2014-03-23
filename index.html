@@ -13,7 +13,7 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link rel="stylesheet" href="css/reveal.min.css">
-        <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -76,6 +76,7 @@
 							<li>semi self-describing format</li>
 							<li>automatic generation of (de-)serialization code</li>
 							<li>services descibed as proto</li>
+							<li>generators for various languages</li>
 						</ul>
 					</section>
 				</section>
@@ -263,6 +264,75 @@ message Address {
 				</section>
 				<section id="bytes">
 					<section><h2>bytes structure & layout</h2></section>
+					<section>
+						<h2>varint</h2>
+							<ul>
+								<li>least significant first</li>
+								<li>7bits per byte consists data</li>
+								<li>highest byte bit - is there more data? </li>
+							</ul>
+							<p class="fragment highlight-current-red roll-in">8 => <strong>0</strong>000 1000</p>
+							<p class="fragment highlight-current-red roll-in">127 => <strong>0</strong>111 1111</p>
+							<p class="fragment highlight-current-red roll-in">
+								128 => <strong>1</strong>000 0000 <strong>0</strong>000 0010
+								<br/>
+								_000 0000 _000 010
+								<br/>
+								000 010 000 0000
+								<br/>
+								0000 0000 0001 0000 0000
+							</p>
+					</section>
+					<section>
+						<h2>wire types</h2>
+						<table class="table">
+							  <th>Value</th>
+							  <th>Meaning</th>
+							  <th>Types</th>
+							  <th>Remarks</th>
+							</th>
+							<tr>
+							  <td>0</td>
+							  <td>variable length int</td>
+							  <td>int32, enum, etc.</td>
+							  <td> - </td>
+							</tr>
+							<tr>
+							  <td>1</td>
+							  <td>64bits</td>
+							  <td>fixed64, sfixed64, double</td>
+							  <td></td>
+							</tr>
+							<tr>
+							  <td>2</td>
+							  <td>length prefixed</td>
+							  <td>string, bytes, custom type messaged, packed repeated fields</td>
+							  <td>an object is prefixed with its byte length</td>
+							</tr>
+							<tr>
+							  <td>3</td>
+							  <td colspan="3">obsolete</td>
+							</tr>
+							<tr>
+							  <td>4</td>
+							  <td colspan="3">obsolete</td>
+							</tr>
+							<tr>
+							  <td>5</td>
+							  <td>32bits</td>
+							  <td>fixed32, sfixed32, float</td>
+							  <td></td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h2>fields headers</h2>
+						<ul>
+							<li>(field_number << 3) | wire_type</li>
+						</ul>
+						<p class="fragment highlight-current-red roll-in">field: tag = 3, type = 0 (varint); header = 3<<3 | 0 = 24 </p>
+						<p class="fragment highlight-current-red roll-in">field: tag = 16, type = 5 (varint); header = 16<<3 | 0 = 128 </p>
+					</section>
 				</section>
 				<section id="performance">
 					<section><h2>performance</h2></section>
