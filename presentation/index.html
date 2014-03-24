@@ -59,7 +59,7 @@
 						<h2>a bit of history</h2>
 					</section>
 					<section>
-						<h2>before protocol buffers</h2>
+						<h2>before protocol buffers...</h2>
 						<ul>
 							<li>sad Google developers :(</li>
 							<li>explicitly formatted protocols</li>
@@ -76,6 +76,25 @@
 							<li>automatic generation of (de-)serialization code</li>
 							<li>services descibed as proto</li>
 							<li>generators for various languages</li>
+						</ul>
+					</section>
+					<section>
+						<h2>followed by protobuf-net...</h2>
+						<ul>
+							<li>created by <a href="https://twitter.com/marcgravell">Marc Gravell</a></li>
+							<li>protocol buffers for .NET </li>
+							<li>support not only custom messages but data contracts, serialization attributes as well</li>
+							<li>provides a WCF serializer to make your messages much smaller</li>
+							<li>creates simple, POCO clasess which...</li>
+							<li>IMO: is much better than bloated immutable implementations of proto</li>
+						</ul>
+					</section>
+					<section>
+						<h2>and extended a bit by protobuf-linq</h2>
+						<ul>
+							<li>a linq provider over stream of messages serialized with protobuf-net</li>
+							<li>useful for large sets of serialized messages</li>
+							<li>can reduce query time up to 50% (the less fields queried, the better speed up)</li>
 						</ul>
 					</section>
 				</section>
