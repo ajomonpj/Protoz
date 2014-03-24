@@ -1,0 +1,14 @@
+message Presentation {
+  required Author author = 1;
+  required string topic = 2;
+  optional int32 attendees_count = 3; // no of real attendees
+  optional int32 attendees_registered = 4; // no of registered attendees
+  repeated string tags = 5;
+  
+  extensions 50 to 100;
+}
+
+message Author {
+  required string name = 1;
+  repeated string tags = 2;
+}

@@ -1,0 +1,1 @@
+".\protobuf-net r668\ProtoGen\protogen.exe" -i:".\proto-example\*.*" -o:"wgnet_extended.cs" -q -ns:"wgnet"

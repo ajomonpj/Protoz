@@ -1,0 +1,10 @@
+import "proto-example/wgnet.proto";
+
+message Address {
+  extend Presentation {
+    optional Address address = 51;
+  }
+  
+  optional string street = 1;
+  optional string city = 2;
+}
