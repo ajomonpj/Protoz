@@ -1,0 +1,3 @@
+[submodule "protobuf-linq"]
+	path = protobuf-linq
+	url = https://github.com/Scooletz/protobuf-linq.git
